@@ -1,20 +1,16 @@
-// ----------------------------------------------------
-// ReservationManager.java - клас за управление на резервации
-// ----------------------------------------------------
-
 import java.sql.*;
 
 public class ReservationManager {
 
     // Метод за създаване на резервация
-    public static void createReservation(int id, String time, String date, String room_number) {
+    public static void createReservation(int id, int time, String date, String room_number) {
         String query = "INSERT INTO request (id, time, date, room_number) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.connect();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
 
             pstmt.setInt(1, id);
-            pstmt.setString(2, time);
+            pstmt.setInt(2, time);  // Записваме час като int
             pstmt.setString(3, date);
             pstmt.setString(4, room_number);
 
@@ -38,11 +34,11 @@ public class ReservationManager {
 
             while (rs.next()) {
                 int id = rs.getInt("id");
-                String time = rs.getString("time");
+                int time = rs.getInt("time");  // Четем като int
                 String date = rs.getString("date");
                 String roomNumber = rs.getString("room_number");
 
-                System.out.println("Резервация ID: " + id + ", Време: " + time + ", Дата: " + date + ", Стая: " + roomNumber);
+                System.out.println("Резервация ID: " + id + ", Час: " + time + " часа, Дата: " + date + ", Стая: " + roomNumber);
             }
 
         } catch (SQLException e) {

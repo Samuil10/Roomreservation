@@ -59,6 +59,28 @@ public class UserManager {
         }
     }
 
+    // Метод за проверка дали потребителят е администратор
+    public static boolean checkIfAdmin(int userId) {
+        String query = "SELECT COUNT(*) FROM admin WHERE person_id = ?";
+
+        try (Connection conn = DatabaseConnection.connect();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setInt(1, userId);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1) > 0;  // Ако върне повече от 0, значи е администратор
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Грешка при проверка на администраторски статус.");
+        }
+
+        return false;  // Ако няма такъв запис в таблицата admin, не е администратор
+    }
+
     // Метод за преименуване на потребител
     public static void renameUser(int id, String newName) {
         String query = "UPDATE person SET name = ? WHERE id = ?";
